@@ -12,7 +12,7 @@ import javax.crypto.spec.IvParameterSpec;
 
 /**
  *
- * @author updated by jamehal
+ * @author last modyfication by jamelah
  */
 public class encryptionSystem {
 
@@ -40,23 +40,31 @@ public class encryptionSystem {
         Sender sender = new Sender();
         Receiver receiver = new Receiver();
 
-        //method to generate keys
+        
+        //method to generate keys /Bob both generate their keys
         receiver.generateKey();
+        sender.generateKey();
         //send public key 
-        sender.setPK_receiver(receiver.getPublicKey());
+        //sender will send a massage to the recever &so we need the recever public key to encrypt the secret key 
+        sender.setPK_receiver(receiver.getSender_publicKey());
 
-        //generate Initial vector(IV)
+         
+//generate Initial vector(IV)
         //create array of 16 bytes beacuse AES algorithm supports key lengths of 128 bits
         byte[] iv = new byte[16];
-        SecureRandom secRandom = new SecureRandom(iv);
+       // SecureRandom secRandom = new SecureRandom(iv);
         IvParameterSpec IV = new IvParameterSpec(iv);
 
         /////////////////////////////////////////////////
         //encrypte the message 
          byte[] senderM=sender.EncryptMessage(plainText, IV);
+         
          //send the encrypted message to receiver
          receiver.setMessage(senderM);
-         receiver.setEncryptkey(sender.getEncryptedKey());
+         
+         
+         //recever will encrypt the secret key using his private key
+         receiver.setAES_SecretKey(sender.getEncryptedKey());
         // decrypte the message
          receiver.DecryptMessage(IV);
     }
